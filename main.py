@@ -3,13 +3,15 @@ import random
 
 df = pd.read_csv('all_seasons.csv')
 df
-equipos = ['ATL', 'BKN', 'BOS', 'CHA', 'CHH', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 
- 'MIN', 'NJN', 'NOH', 'NOK', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHX', 'POR', 'SAC', 'SAS', 'SEA', 'TOR', 'UTA', 'VAN', 'WAS']
+# equipos = ['ATL', 'BKN', 'BOS', 'CHA', 'CHH', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 
+#  'MIN', 'NJN', 'NOH', 'NOK', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHX', 'POR', 'SAC', 'SAS', 'SEA', 'TOR', 'UTA', 'VAN', 'WAS']
+equipos = ['ATL', 'BKN', 'BOS', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 
+ 'MIN', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHX', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
 
 first_r = []
-second_r = []
-# CREC QUE POT TORNAR MATEIX NOMBRE 2 VEGADES, REPASSA    
-rands = [random.randint(0, 36) for i in range(6) ] # if i not in rands SI FAIG ASO DARRERA, ME TORNA UN DE BUIT, FER FUNCIÓ
+second_r = []   
+rands = random.sample(range(30), 6) # if i not in rands SI FAIG ASO DARRERA, ME TORNA UN DE BUIT, FER FUNCIÓ
+# rands = [random.randint(0, 36) for i in range(6) ] # if i not in rands SI FAIG ASO DARRERA, ME TORNA UN DE BUIT, FER FUNCIÓ
 count = 0
 
 for i in rands:
@@ -21,9 +23,16 @@ for i in rands:
 
 
 def print_board(board):
-    for row in board:
-        print(" | ".join(row))
-        print("-" * 9)
+    # Print column header
+    print('  ', (' | '.join(first_r))) # row
+    print('-----------------')
+
+    # Print the board
+    for i, row in enumerate(board):
+        print(second_r[i], end=' | ') # column
+        for element in row:
+            print(element, end=' | ')
+        print('\n-----------------')
 
 def check_win(board, player):
     for row in board:
@@ -50,14 +59,22 @@ def play_tic_tac_toe():
     current_player = "X"
 
     while True:
-        print(first_r)
-        print(second_r)
         print_board(board)
         teams = check_player()
         
-        row = int(input(f"Player {current_player}, enter row (0, 1, 2): "))
-        col = int(input(f"Player {current_player}, enter column (0, 1, 2): "))
-            
+        while True:
+            try:
+                row = int(input(f'Player {current_player} enter the row number (1-3): ')) - 1
+                col = int(input(f'Player {current_player} enter the column number (1-3): ')) - 1
+
+                # posar un if si està bé però ocupat que passi o si falla amb es jugador triat
+                if 0 <= row < 3 and 0 <= col < 3:
+                    break
+                else:
+                    print('Invalid input. Row and column numbers must be between 1 and 3.')
+            except ValueError:
+                print('Invalid input. Please enter a valid number.')
+                
         if board[row][col] != " ":
             print("Cell already taken. Try again.")
             continue
