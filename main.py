@@ -10,7 +10,7 @@ equipos = ['ATL', 'BKN', 'BOS', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW',
 
 first_r = []
 second_r = []   
-rands = random.sample(range(30), 6) # if i not in rands SI FAIG ASO DARRERA, ME TORNA UN DE BUIT, FER FUNCIÓ
+rands = random.sample(range(30), 6) # Aquest funciona bé
 # rands = [random.randint(0, 36) for i in range(6) ] # if i not in rands SI FAIG ASO DARRERA, ME TORNA UN DE BUIT, FER FUNCIÓ
 count = 0
 
