@@ -6,10 +6,26 @@ import random
 df = pd.read_csv('all_seasons.csv')
 names = set(df['player_name'])
 
+equipos = ['ATL', 'BKN', 'BOS', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA', 'MIL', 
+ 'MIN', 'NOP', 'NYK', 'OKC', 'ORL', 'PHI', 'PHX', 'POR', 'SAC', 'SAS', 'TOR', 'UTA', 'WAS']
+names = set(df['player_name'])
+
+first_r = []
+second_r = []   
+rands = random.sample(range(30), 6)
+count = 0
+
+for i in rands:
+    count += 1
+    if count <= 3:
+        first_r.append(equipos[i])
+    else:
+        second_r.append(equipos[i])
+
 pygame.init()
 
 # Game Configuration
-size = 600, 700
+size = 600, 760
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption('Tic Tac Toe')
 
@@ -26,10 +42,28 @@ input_box_active = True
 input_box_rect = pygame.Rect(50, 650, 500, 30)
 
 # Tic Tac Toe Board (4x4)
-board_state = [['', '', '', ''],
+board_state = [[' ', '', '', ''],
                ['', '', '', ''],
                ['', '', '', ''],
                ['', '', '', '']]
+
+def load_and_resize_image(img_path, target_size):
+    image = pygame.image.load(img_path)
+    return pygame.transform.scale(image, target_size)
+
+def draw_image(image, rect):
+    if image:
+        screen.blit(image, rect)
+
+for i in range(3):
+    # Load and resize images for first_r[0], first_r[1], first_r[2]
+    img_path = f'teams/{first_r[i]}.png'
+    board_state[0][i + 1] = load_and_resize_image(img_path, (140, 140))
+
+for i in range(3):
+    # Load and resize images for second_r[0], second_r[1], second_r[2]
+    img_path = f'teams/{second_r[i]}.png'
+    board_state[i + 1][0] = load_and_resize_image(img_path, (140, 140))
 
 # Current Player
 current_player = 'X'
@@ -110,9 +144,12 @@ while run:
     for row in range(4):
         for col in range(4):
             pygame.draw.rect(screen, black, (col * 150, row * 150, 150, 150), 2)
-            text_surface = font.render(board_state[row][col], True, black)
-            text_rect = text_surface.get_rect(center=(col * 150 + 75, row * 150 + 75))
-            screen.blit(text_surface, text_rect)
+            if isinstance(board_state[row][col], pygame.Surface):
+                draw_image(board_state[row][col], (col * 150 + 5, row * 150 + 5))
+            else:
+                text_surface = font.render(str(board_state[row][col]), True, black)
+                text_rect = text_surface.get_rect(center=(col * 150 + 75, row * 150 + 75))
+                screen.blit(text_surface, text_rect)
 
     # Draw the Input Box
     pygame.draw.rect(screen, black, input_box_rect, 2)
