@@ -98,6 +98,7 @@ def check_player(name):
 
 # Main Game Loop
 run = True
+run = True
 while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -115,6 +116,9 @@ while run:
                         input_box_active = False
                 elif event.key == pygame.K_BACKSPACE:
                     input_text = input_text[:-1]
+                elif event.key == pygame.K_b:
+                    # Si se presiona la tecla "B", borra la selección actual
+                    input_text = ""
                 elif event.key == pygame.K_DOWN:
                     selected_suggestion = (selected_suggestion + 1) % len(suggestions)
                 elif event.key == pygame.K_UP:
@@ -123,41 +127,56 @@ while run:
                     input_text += event.unicode
                     suggestions = [nombre for nombre in names if nombre.lower().startswith(input_text.lower())]
                     selected_suggestion = 0  # Reset suggestion selection when typing
+            else:
+                # Si la caja de entrada no está activa, permitir escribir un nuevo nombre
+                input_box_active = True
+                input_text += event.unicode
+                suggestions = [nombre for nombre in names if nombre.lower().startswith(input_text.lower())]
+                selected_suggestion = 0  # Reset suggestion selection when typing
+
         elif not input_box_active and event.type == pygame.MOUSEBUTTONDOWN:
             mouseX, mouseY = event.pos
-            clicked_row = mouseY // 150
-            clicked_col = mouseX // 150
 
-            # Ignore clicks in the first row and first column
-            if 0 < clicked_row < 4 and 0 < clicked_col < 4 and board_state[clicked_row][clicked_col] == '':
-                # Obtener los nombres de los equipos en las casillas correspondientes
-                team1 = first_r[clicked_col-1]
-                team2 = second_r[clicked_row-1]
+            # Verificar si hizo clic en la caja de entrada
+            if input_box_rect.collidepoint(mouseX, mouseY):
+                input_text = ""  # Borrar texto si hizo clic en la caja de entrada
+            else:
+                clicked_row = mouseY // 150
+                clicked_col = mouseX // 150
 
-                print(f"Team 1: {team1}")
-                print(f"Team 2: {team2}")
-                print(f"Input Text: {input_text}")
+                # Ignore clicks in the first row and first column
+                if 0 < clicked_row < 4 and 0 < clicked_col < 4 and board_state[clicked_row][clicked_col] == '':
+                    # Obtener los nombres de los equipos en las casillas correspondientes
+                    team1 = first_r[clicked_col-1]
+                    team2 = second_r[clicked_row-1]
 
-                # Verificar si el jugador seleccionado está entre los dos equipos
-                player_teams = check_player(input_text)
-                if team1 in player_teams and team2 in player_teams:
-                    print("Valid move!")
-                    board_state[clicked_row][clicked_col] = current_player
-                    winner = check_winner()
-                    if winner:
-                        print(f"Player {winner} wins!")
-                        run = False
-                    elif all(all(cell != '' for cell in row[1:]) for row in board_state[1:]):
-                        print("It's a draw!")
-                        run = False
+                    print(f"Team 1: {team1}")
+                    print(f"Team 2: {team2}")
+                    print(f"Input Text: {input_text}")
 
-                    current_player = 'X' if current_player == 'O' else 'O'
-                    input_text = ""
-                    input_box_active = True
-                    suggestions = []
-                else:
-                    print("Invalid move!")
+                    # Verificar si el jugador seleccionado está entre los dos equipos
+                    player_teams = check_player(input_text)
+                    if team1 in player_teams and team2 in player_teams:
+                        print("Valid move!")
+                        board_state[clicked_row][clicked_col] = current_player
+                        winner = check_winner()
+                        if winner:
+                            print(f"Player {winner} wins!")
+                            run = False
+                        elif all(all(cell != '' for cell in row[1:]) for row in board_state[1:]):
+                            print("It's a draw!")
+                            run = False
 
+                        current_player = 'X' if current_player == 'O' else 'O'
+                        input_text = ""
+                        input_box_active = True
+                        suggestions = []
+                    else:
+                        print("Invalid move!")
+                        current_player = 'X' if current_player == 'O' else 'O'
+                        input_text = ""
+                        input_box_active = True
+                        suggestions = []
     # Draw the Board
     screen.fill(white)
     for row in range(4):
