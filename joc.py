@@ -98,7 +98,8 @@ def check_player(name):
 
 # Main Game Loop
 run = True
-run = True
+invalid_move_message = None
+invalid_move_timer = 0
 while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -173,10 +174,13 @@ while run:
                         suggestions = []
                     else:
                         print("Invalid move!")
+                        invalid_move_message = "Invalid move!"
+                        invalid_move_timer = 270  # 3 segundos a 60 fps
                         current_player = 'X' if current_player == 'O' else 'O'
                         input_text = ""
                         input_box_active = True
                         suggestions = []
+
     # Draw the Board
     screen.fill(white)
     for row in range(4):
@@ -204,6 +208,15 @@ while run:
                 pygame.draw.rect(screen, (200, 200, 200), (50, 680 + i * 30, 500, 30))
             text_surface = font.render(suggestion, True, black)
             screen.blit(text_surface, (60, 690 + i * 30))
+
+    # Draw Invalid Move Message
+    if invalid_move_message:
+        pygame.draw.rect(screen, (255, 0, 0), (0, 0, size[0], 30))
+        text_surface = font.render(invalid_move_message, True, white)
+        screen.blit(text_surface, (10, 5))
+        invalid_move_timer -= 1
+        if invalid_move_timer <= 0:
+            invalid_move_message = None
 
     pygame.display.flip()
 
